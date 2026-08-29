@@ -3,7 +3,7 @@
   "url": "https://www.youtube.com/watch?v=jlzQnXcUxqI",
   "video_title": "Destiny 2 Cutscene Archive - The Witch Queen",
   "captured": "2026-08-29",
-  "captured_with": "yt-dlp --dump-single-json --skip-download",
+  "captured_with": "yt-dlp --dump-single-json --skip-download <url> | python3 tools/capture_chapters.py --from-json -",
   "chapters": [
     {
       "start": 0,

@@ -41,11 +41,15 @@ Nothing here rewrites, reorders, shortens, or "improves" those headlines.
 Their provenance is recorded in `vocab/season-one.yaml` under
 `headline_source`: the publisher chapter metadata of
 <https://www.youtube.com/watch?v=jlzQnXcUxqI>, captured with
-`yt-dlp --dump-single-json --skip-download` into
+`yt-dlp --dump-single-json --skip-download` and reshaped by
+[`tools/capture_chapters.py`](tools/capture_chapters.py) into
 `sources/jlzQnXcUxqI.chapters.json` — the artifact is the authority the
-headlines are validated against. This repository only offers
-**three subtitle candidates per chapter**, and downstream picks one and
-freezes it.
+headlines are validated against. The raw yt-dlp dump nests each chapter
+under `start_time`/`end_time` inside a video info dict of unrelated fields;
+it is never the artifact's shape by itself, only that tool's input.
+`captured_with` on both records names the actual pipeline, not the raw
+command alone. This repository only offers **three subtitle candidates per
+chapter**, and downstream picks one and freezes it.
 
 ## Generation is a proposal, and it is deterministic
 
@@ -174,7 +178,7 @@ episode airs, or anything about a contributor.
     lore/              Destiny Witch Queen reference, cited
     mapping/           kubestellar/hive architecture -> lore metaphor
     vocab/             season-one subtitle candidates and the banned list
-    tools/             the deterministic CLI
+    tools/             the deterministic CLI, and the chapter capture/reshape tool
     tests/             determinism, coverage, banned-terms, provenance
 ```
 

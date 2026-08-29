@@ -11,6 +11,7 @@ Offline: no network, no footage, no model.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -77,6 +78,20 @@ def run_cli(*args: str) -> str:
         [sys.executable, str(TITLES), *args],
         capture_output=True,
         text=True,
+        check=True,
+    )
+    return result.stdout
+
+
+def run_cli_raw_bytes(env_overrides: dict, *args: str) -> bytes:
+    """The CLI's raw stdout BYTES under a caller-chosen ambient stdout
+    encoding -- captured without `text=True`, so the test harness itself
+    never silently re-decodes with a codec the CLI did not use."""
+    env = {**os.environ, **env_overrides}
+    result = subprocess.run(
+        [sys.executable, str(TITLES), *args],
+        capture_output=True,
+        env=env,
         check=True,
     )
     return result.stdout
@@ -275,3 +290,40 @@ def test_project_lore_cli_emits_the_ship_record_verbatim():
     assert "film renderer" in ship["placement"]
     # The CLI record must be the committed record, not a paraphrase.
     assert payload["project_lore"] == load_vocab()["project_lore"]
+
+
+def test_project_lore_emits_identical_ascii_bytes_under_any_stdout_encoding():
+    """`--project-lore` carries "Savath\u00fbn" (a non-ASCII character) in its
+    `subject` field. Output must be the SAME bytes whether the ambient
+    stdout encoding is UTF-8, ASCII, or Latin-1 -- json.dump's incremental
+    write used to crash mid-emit under a narrower encoding (`ensure_ascii`
+    was False and the write went through `sys.stdout`'s text layer), which
+    left a truncated, invalid prefix on stdout instead of either the full
+    record or nothing at all."""
+    utf8 = run_cli_raw_bytes({"PYTHONIOENCODING": "utf-8"}, "--project-lore")
+    ascii_env = run_cli_raw_bytes({"PYTHONIOENCODING": "ascii"}, "--project-lore")
+    latin1 = run_cli_raw_bytes({"PYTHONIOENCODING": "latin-1"}, "--project-lore")
+    assert utf8 == ascii_env == latin1
+
+    # The bytes are valid ASCII -- a strict subset of every encoding, so no
+    # ambient codec can ever fail to write them.
+    decoded = utf8.decode("ascii")
+    payload = json.loads(decoded)
+    ship = {e["id"]: e for e in payload["project_lore"]}["savathuns-ship"]
+    assert ship["subject"] == \
+        "Savath\u00fbn's ship, named from this project's point of view"
+
+
+def test_project_lore_never_partially_emits_under_a_narrow_encoding():
+    """A crash mid-serialization must never leave a truncated, invalid JSON
+    prefix on stdout -- the process either prints the complete record or
+    prints nothing. (Before the fix, ASCII stdout emitted several valid
+    lines and then crashed partway through the `subject` field.)"""
+    result = subprocess.run(
+        [sys.executable, str(TITLES), "--project-lore"],
+        capture_output=True,
+        env={**os.environ, "PYTHONIOENCODING": "ascii"},
+    )
+    assert result.returncode == 0, result.stderr.decode("ascii", "replace")
+    json.loads(result.stdout.decode("ascii"))  # must parse as complete JSON
+

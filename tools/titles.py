@@ -97,8 +97,18 @@ def main(argv: list[str] | None = None) -> int:
             print(f"titles: {exc.args[0]}", file=sys.stderr)
             return 2
 
-    json.dump(payload, sys.stdout, indent=2, ensure_ascii=False, sort_keys=True)
-    sys.stdout.write("\n")
+    # Serialize COMPLETELY before writing anything: json.dump() writes
+    # incrementally as it encodes, so a payload containing a non-ASCII
+    # character (e.g. "Savath\u00fbn") could emit a truncated, invalid
+    # prefix and then crash mid-stream on an ambient stdout encoding that
+    # cannot represent it (ASCII, or Latin-1's narrower repertoire). The
+    # output must be the same bytes regardless of the caller's locale, so
+    # it is built as one ASCII string (ensure_ascii=True escapes every
+    # non-ASCII codepoint as \uXXXX) and written to the raw byte stream,
+    # never through sys.stdout's text encoding.
+    text = json.dumps(payload, indent=2, ensure_ascii=True, sort_keys=True)
+    sys.stdout.buffer.write(text.encode("ascii"))
+    sys.stdout.buffer.write(b"\n")
     return 0
 
 
