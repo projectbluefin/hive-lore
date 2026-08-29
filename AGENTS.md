@@ -1,196 +1,164 @@
 # hive-lore — Agent Operating Contract
 
-`hive-lore` holds the **epithet policy**: the rules for putting a fictional
-title row on a card that credits a real person, and the lore that title is
-drawn from.
+`hive-lore` supplies **title-slide lore**: the subtitle candidates that sit
+under the publisher chapter titles on the episode title slides of *Season of
+the Blueberries*, the 12-chapter KubeStellar contributor series cut in
+`castrojo/destiny-vids`.
 
 It exists because `castrojo/destiny-vids` said *"Never invent on-screen copy"*
 and the owner then authorised exactly one narrow exception. That exception
 needs a contract of its own, or it becomes a hole in the one it came from.
 
-## What this repository is for
+## The corrected scope
 
-Project Bluefin's videos credit real contributors on Destiny-style nameplates.
-A nameplate carries a `name` row and a `title` row:
+Owner, correcting the previous contract: **custom/generated lore belongs only
+on episode title slides. Contributor nameplates are factual GitHub data and
+get no generated title.**
 
-```
-    MAINTAINER // GUARDIAN        <- label
-    Danathar                      <- name   : a real person
-    Blade of the Unbroken Tithe   <- title  : fiction
-```
-
-The `name` row is a claim about a human being. The `title` row is a costume.
-This repository is the wardrobe, and the rules for who may wear what.
-
-## Rule zero: the name is never generated
-
-**A person's name row is their verified GitHub login, or copy the owner wrote.
-It is never generated, never expanded, never "corrected".**
-
-This is not softened by anything below. `destiny-vids` records the scar:
-`github.com/nimbatus` is an unrelated empty account while Laura Santamaria is
-`nimbinatus`, so resolving her by the character string would have put a
-stranger's face on her credit. A login is verifiable; a display name is not;
-an inferred real name is neither.
+The contributor-epithet contract this file previously carried — generating a
+`title` row for a real person's nameplate — is **obsolete and revoked**. It
+was written before that ruling and it overreached:
 
 | | |
 |---|---|
-| Login verified, profile declares a real name | Either may be used. The owner picks. |
-| Login verified, profile declares only the handle | **Use the handle.** It is honest. |
-| Login verified, profile `name` is null | **Use the handle.** |
-| No verified login | The person is not credited yet. Record it; do not guess. |
+| Episode title slide | Headline: the publisher chapter title, **verbatim and untouchable**. Subtitle: may be generated, from this repository's committed pool. |
+| Contributor nameplate | **Factual GitHub data only.** Name, stats, dates. No generated title, no epithet, no lore string. Ever. |
 
-A handle is not a gap to be filled. `Danathar`'s profile says `Danathar`, and
-`Danathar` is what the card says.
+The scar that already lived here still stands as the reason: a credit row is
+a claim about a human being (`github.com/nimbatus` is a stranger;
+`nimbinatus` is Laura Santamaria). A generated epithet next to a real login
+reads as biography the moment it is on screen. The only generated prose left
+in the programme is a subtitle under a chapter headline, where it plainly
+describes the episode, not a person.
 
-## The exception this repository exists to govern
+## Rule zero: the headline is the publisher's
 
-Owner, authorising it: *"you may generate lore appropriate things, this
-project needs AI generated titles to rotate weekly."*
+Each of the 12 chapters keeps its **publisher chapter title** as the slide
+headline, unchanged: *The Enclave, On Mars, Savathun, The Relic, To Be
+Chosen, Remembering, Council, Worm, Defeated, The Witness, With Mara, Raid*.
 
-So: **`title` may be generated. Nothing else may be.**
+Nothing here rewrites, reorders, shortens, or "improves" those headlines.
+This repository only offers **three subtitle candidates per chapter**, and
+downstream picks one and freezes it.
 
-That is defensible because the title row is already fiction everywhere it
-appears — Bob Killen is "Reconciler of the Plane", nobody believes he holds
-that office — and because an epithet makes no factual claim about the person
-wearing it. The moment a generated string would read as biography, affiliation,
-employer, role, pronoun, or achievement, it has stopped being an epithet and
-this exception no longer covers it.
+## Generation is a proposal, and it is deterministic
 
-### The closed field set still holds
+For each chapter, `vocab/season-one.yaml` carries **three reviewed,
+copyeditable subtitle candidates**. The owner may edit a candidate's words;
+they may not edit the set below three without deleting the chapter's slide.
 
-The deck's fields are `label`, `class`, `name`, `title`, `trustee`. This
-repository adds **no field**. It only supplies strings for `title`.
-
-An epithet that needs a new row is not an epithet. Do not add an `AS
-<CHARACTER>` line, a role line, or a house line to carry it.
-
-## Generation must be deterministic
-
-**A re-render must never reshuffle who was called what.** A card that reads
-"Blade of the Unbroken Tithe" on Monday and something else on Tuesday makes
-every earlier render stale, and stale copy is the one failure `destiny-vids`
-refuses outright.
-
-So generation is a **pure function of `(login, ISO week)`** over a committed
-pool:
-
-```
-    epithet(login, iso_week) -> deterministic pick from vocab/
-```
-
-- The pool is committed here. It is data, not model output at render time.
-- The seed is the ISO week, which is what "rotate weekly" means: the same
-  person gets the same epithet all week, and a different one next week.
-- No network call, no model call, at render time. A video built from week
-  2026-W35 is reproducible in 2027 by asking for week 2026-W35.
-- `tools/` regenerates; nothing downstream hand-edits an assigned epithet.
-
-`destiny-vids`' `tools/ensemble.py` already seeds its rotation on the month
-for exactly this reason. This is the same posture with a finer period.
-
-### Rotation is not permission to churn a delivered film
-
-A delivered video's epithets are **frozen at the week it was built**, recorded
-in its manifest. Rotation applies to the *next* build, never retroactively.
-Nothing in this repository is a reason to re-render a shipped act.
+- Selection is a **pure function of chapter number** — `tools/titles.py
+  <chapter>` prints the same JSON today, next week, and in 2027. No network
+  call, no model call, no clock, no randomness.
+- **The chosen subtitle is frozen downstream.** Once `destiny-vids` records
+  a pick for a chapter, changing it there is a new editorial decision, never
+  a side effect of a rebuild. A change to a candidate here does not reach an
+  already-delivered episode.
+- A re-render must never reshuffle copy. Stale copy is the one failure
+  `destiny-vids` refuses outright.
 
 ## The lore must be real lore
 
-An epithet is generated from **canon Destiny Hive material**, recorded in
-`lore/` with citations, and mapped onto the **actual architecture** of
-`kubestellar/hive`, recorded in `mapping/`.
+Subtitles draw on **canon Destiny material**, recorded in
+[`lore/witch-queen.md`](lore/witch-queen.md) with citations, and on the
+**actual architecture** of `kubestellar/hive`, recorded in
+[`mapping/kubestellar-hive.md`](mapping/kubestellar-hive.md) from the
+repository's own README.
 
-- Canon and extrapolation are labelled differently. A pattern inferred from
-  three examples is marked as inferred.
-- An epithet is assembled from documented Hive naming *grammar*, not lifted
-  wholesale from a named character. Nobody gets to be Oryx.
-- The mapping to the software is evidenced from the repository, not imagined.
-  If `hive` has no component that fits, the metaphor does not get invented to
-  fill the hole.
+- Canon and extrapolation are labelled differently. Every candidate carries a
+  `nature` field: `canon` (a claim the source makes), `canon_inspired`
+  (grammar or imagery assembled from canon), or `extrapolation` (the project
+  metaphor). A pattern inferred from examples is marked as inferred.
+- A subtitle is assembled from documented lore terms, **not** lifted from a
+  named character's epithet. Nobody's episode is titled by stealing Oryx's
+  or Savathûn's personal titles.
+- The mapping to the software is evidenced from the `kubestellar/hive`
+  repository, not imagined. If the architecture has no component that fits,
+  the metaphor does not get invented to fill the hole.
 
-## Nobody is made a monster
+## Subtitles are never about people
 
-The Hive are, in fiction, cruel. The people being credited are colleagues.
+A subtitle describes the **episode's fiction or its architecture metaphor**.
+It never describes a contributor, a GitHub account, a company, or a role.
 
-**An epithet must read as honorific.** Grand, ritual, a little baroque — never
-an insult, never a slur, never a joke at the wearer's expense, and never
-implying villainy a real person would object to.
+- No login, display name, real name, or `@`-mention appears in a subtitle.
+- No factual claim about any person: no roles, employers, achievements,
+  pronouns, or affiliations — not even flattering ones.
+- `banned_terms` in `vocab/season-one.yaml` is the floor, not the ceiling: a
+  term that clears the list and still reads as a person-facing claim is still
+  wrong. `tests/test_titles.py` enforces both.
 
-- Cannon-fodder castes (`Thrall` and below) are **banned** as epithet material.
-  Being credited as the lowest disposable rank is an insult even in jest.
-- Terms coding cowardice, servility, filth, decay of the person, or bodily
-  horror are banned.
-- Anything that reads as a comment on the person's appearance, nationality,
-  gender, or beliefs is banned outright.
-- `vocab/banned.yaml` is the list, and it is a floor rather than a ceiling:
-  a term that clears the list and still reads badly is still wrong.
-
-**When in doubt, it does not ship.** An unassigned epithet degrades to no
-title row at all, which is a complete, correct card.
+**When in doubt, the candidate does not ship.** A chapter with no acceptable
+subtitle degrades to the publisher headline alone, which is a complete,
+correct title slide.
 
 ## Degrade, never block
 
 Inherited from `destiny-vids`, and unchanged:
 
-- No epithet for somebody? **The card renders without a title row.** That is a
-  finished card, not a broken one.
-- Lore missing for a component? Record it; ship the rest.
-- Nothing here may hold a release. A missing costume is never a reason to
-  withhold a film.
+- No acceptable subtitle for a chapter? **The slide renders with the headline
+  only.** That is a finished slide, not a broken one.
+- Lore missing for a chapter's theme? Record it; ship the rest.
+- Nothing here may hold a release. A missing subtitle is never a reason to
+  withhold an episode.
 
 ## Provenance is mandatory
 
-Every assigned epithet records where it came from:
+Every candidate in `vocab/season-one.yaml` records where it came from:
 
 | Field | Meaning |
 |---|---|
-| `copy_source: generated_lore` | Produced by this repository's generator. |
-| `lore_refs` | The `lore/` entries the parts came from. |
-| `seed` | The `(login, iso_week)` pair that produced it. |
+| `copy_source: generated_lore` | Produced under this repository's contract. |
+| `lore_refs` | The `lore/` entry IDs the canon parts came from. May be empty. |
+| `mapping_refs` | The `mapping/` entry IDs the architecture metaphor came from. May be empty. |
+| `nature` | `canon`, `canon_inspired`, or `extrapolation`. |
 | `authorised_by` | The owner instruction permitting generation at all. |
 
-A generated title with no provenance is indistinguishable from an invented
+A generated subtitle with no provenance is indistinguishable from an invented
 one, which is the thing the parent contract bans. **`copy_source` is not
 optional.**
 
 ## Boundaries
 
-- **Never credit anyone this repository cannot resolve to a verified login.**
-- **Never generate a `name`, a `class`, or a `label`.** Only `title`.
+- **Never put generated copy on a contributor nameplate.** That is the whole
+  correction.
+- **Never rewrite a publisher chapter title.**
+- **Never name or reference a real person in a subtitle.**
 - **Never present extrapolation as canon.**
-- **Never re-render a delivered film to apply a rotation.**
-- **Never add a nameplate field.**
+- **Never unfreeze a subtitle downstream has already frozen.** A candidate
+  edit here applies to unpicked chapters only.
 - This repository holds text and data. **No footage, no avatars, no renders.**
 
 ## Relationship to the other repositories
 
 | Repository | Authority |
 |---|---|
-| `castrojo/destiny-vids` | The film, the plates, the casting, delivery. **Outranks this repo on everything except epithet text.** |
-| `projectbluefin/hive-lore` | Epithet policy, lore reference, the architecture mapping, the generator. |
+| `castrojo/destiny-vids` | The season, the slides, the casting, the freeze, delivery. **Outranks this repo on everything except subtitle candidate text.** |
+| `projectbluefin/hive-lore` | Subtitle policy, lore reference, the architecture mapping, the deterministic CLI. |
 | `kubestellar/hive` | The software being mapped. Read-only evidence; never edited from here. |
 
-This repository is a **supplier**. It hands `destiny-vids` strings for one
-field. It does not decide who is cast, where a plate sits, when a film ships,
-or what a person's name is.
+This repository is a **supplier**. It hands `destiny-vids` three strings per
+chapter. It does not decide which one ships, where a slide sits, when an
+episode airs, or anything about a contributor.
 
 ## Layout
 
 ```
     AGENTS.md          this contract
-    lore/              Destiny Hive reference, cited
+    lore/              Destiny Witch Queen reference, cited
     mapping/           kubestellar/hive architecture -> lore metaphor
-    vocab/             the epithet pools and the banned list
-    tools/             the deterministic generator
-    tests/             the generator, the bans, and determinism
+    vocab/             season-one subtitle candidates and the banned list
+    tools/             the deterministic CLI
+    tests/             determinism, coverage, banned-terms, provenance
 ```
 
 ## Verification
 
 ```bash
-python3 -m pytest -q          # determinism, banned terms, provenance
+python3 -m pytest -q          # determinism, coverage, banned terms, provenance
 ```
 
-A generator change that moves an existing `(login, week)` assignment must fail
+The suite is offline: no network, no footage, no model. A change that alters
+what `tools/titles.py <chapter>` prints for a frozen chapter must be caught
+by review, and a change that breaks determinism, coverage, or the bans fails
 the suite. That is the point of the suite.
