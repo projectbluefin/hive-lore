@@ -1,0 +1,69 @@
+{
+  "video_id": "jlzQnXcUxqI",
+  "url": "https://www.youtube.com/watch?v=jlzQnXcUxqI",
+  "video_title": "Destiny 2 Cutscene Archive - The Witch Queen",
+  "captured": "2026-08-29",
+  "captured_with": "yt-dlp --dump-single-json --skip-download <url> | python3 tools/capture_chapters.py --from-json -",
+  "chapters": [
+    {
+      "start": 0,
+      "end": 125,
+      "title": "The Enclave"
+    },
+    {
+      "start": 125,
+      "end": 218,
+      "title": "On Mars"
+    },
+    {
+      "start": 218,
+      "end": 309,
+      "title": "Savathun"
+    },
+    {
+      "start": 309,
+      "end": 351,
+      "title": "The Relic"
+    },
+    {
+      "start": 351,
+      "end": 484,
+      "title": "To Be Chosen"
+    },
+    {
+      "start": 484,
+      "end": 501,
+      "title": "Remembering"
+    },
+    {
+      "start": 501,
+      "end": 579,
+      "title": "Council"
+    },
+    {
+      "start": 579,
+      "end": 744,
+      "title": "Worm"
+    },
+    {
+      "start": 744,
+      "end": 1005,
+      "title": "Defeated"
+    },
+    {
+      "start": 1005,
+      "end": 1085,
+      "title": "The Witness"
+    },
+    {
+      "start": 1085,
+      "end": 1181,
+      "title": "With Mara"
+    },
+    {
+      "start": 1181,
+      "end": 1248,
+      "title": "Raid"
+    }
+  ]
+}

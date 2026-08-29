@@ -1,0 +1,330 @@
+# Season of the Blueberries — title-slide subtitle candidates
+#
+# Three reviewed, copyeditable subtitle candidates per chapter. The publisher
+# chapter title stays verbatim as the headline; downstream picks ONE candidate
+# per chapter and freezes it. See AGENTS.md for the contract.
+#
+# Selection is a pure function of chapter number (tools/titles.py). Nothing
+# here is random, clocked, or networked.
+
+schema: hive-lore/season-one/v1
+season: season-of-the-blueberries
+authorised_by: "Owner, 2026-08-29: custom/generated lore belongs only on episode title slides; contributor nameplates are factual GitHub data and get no generated title."
+policy:
+  generated_scope: title_slide_subtitle_only
+  headlines: publisher_verbatim
+  candidates_per_chapter: 3
+  frozen_downstream: true
+
+# Provenance for the chapter list itself. The 12 headlines are the publisher's
+# chapter titles, recorded verbatim from the video's chapter metadata; the
+# captured artifact is the authority the `chapters` list below is validated
+# against (tests/test_titles.py reads it — never a hand-typed copy).
+headline_source:
+  kind: publisher_chapter_metadata
+  video: "https://www.youtube.com/watch?v=jlzQnXcUxqI"
+  artifact: sources/jlzQnXcUxqI.chapters.json
+  captured_with: "yt-dlp --dump-single-json --skip-download <url> | python3 tools/capture_chapters.py --from-json -"
+  recorded: "2026-08-29"
+
+# Owner-authored project lore (AGENTS.md, "Owner-authored project lore").
+# Project lore, NOT Destiny canon: it may not be cited as canon and may not
+# inform canon* candidates. Wording is verbatim — reproduce exactly or omit.
+# Kept off the heroes: never person-facing, never on a nameplate or dossier.
+project_lore:
+  - id: savathuns-ship
+    subject: "Savathûn's ship, named from this project's point of view"
+    lines:
+      - "Palace of AI Expectations"
+      - "Tomb of Platform Teams"
+    source: "Witch Queen archive, 01:53, bottom-right lower third"
+    nature: owner_authored
+    copy_source: owner_authored_lore
+    person_facing: never
+    placement: film renderer only; this repository supplies provenance/data
+
+# Banned in subtitle text: person-facing claims and terms that read as
+# biography, affiliation, or a named character's personal epithet. This list
+# is a floor, not a ceiling (AGENTS.md).
+banned_terms:
+  # Named characters and their personal titles — nobody's slide borrows them.
+  - Oryx
+  - Taken King
+  - Witch Queen
+  - God-King
+  - Xivu Arath
+  - Rhulk
+  - Mara Sov
+  # Cannon-fodder / degrading castes (carried over from the revoked epithet
+  # policy — still never aimed at anything on screen).
+  - Thrall
+  # Person-facing machinery — a subtitle is never about a person.
+  - "@"
+  - GitHub
+  - contributor
+  - maintainer
+
+chapters:
+  - number: 1
+    headline: The Enclave
+    candidates:
+      - id: 1
+        text: "Where the work is shaped, not wished."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [enclave, relic-shaping]
+        mapping_refs: [deterministic-pipeline]
+      - id: 2
+        text: "One door, one port, one place the swarm reports."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [enclave]
+        mapping_refs: [gateway]
+      - id: 3
+        text: "The forge admits only what the gate has already passed."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [enclave, relic-shaping]
+        mapping_refs: [gateway, enforcement-gate]
+
+  - number: 2
+    headline: On Mars
+    candidates:
+      - id: 1
+        text: "A world returned, and nothing on it unchanged."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [mars-returned]
+        mapping_refs: []
+      - id: 2
+        text: "What the storm buried, the work digs back up."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [mars-returned]
+        mapping_refs: [orchestrator]
+      - id: 3
+        text: "Old ground, new inventory."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [mars-returned]
+        mapping_refs: [orchestrator, classification]
+
+  - number: 3
+    headline: Savathun
+    candidates:
+      - id: 1
+        text: "Light in the brood, doubt in the court."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [lucent-brood, savathun]
+        mapping_refs: []
+      - id: 2
+        text: "The cleverest question in the system is still a question."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [savathun]
+        mapping_refs: [agent-roster]
+      - id: 3
+        text: "Every bargain has a voice that taught it."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [savathun, worm-gods]
+        mapping_refs: [orchestrator]
+
+  - number: 4
+    headline: The Relic
+    candidates:
+      - id: 1
+        text: "Shape the tool, then trust it with the work."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [relic-shaping]
+        mapping_refs: [deterministic-pipeline]
+      - id: 2
+        text: "Reshape, refire, repeat."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [relic-shaping]
+        mapping_refs: [cadence]
+      - id: 3
+        text: "Nothing is wielded here that was not first understood."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [relic-shaping]
+        mapping_refs: [deterministic-pipeline, classification]
+
+  - number: 5
+    headline: To Be Chosen
+    candidates:
+      - id: 1
+        text: "Chosen is a verdict, not a wish."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [chosen]
+        mapping_refs: []
+      - id: 2
+        text: "The queue does not choose favorites; it chooses readiness."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [chosen]
+        mapping_refs: [classification, cadence]
+      - id: 3
+        text: "Even the swarm waited to be found worthy."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [chosen, lucent-brood]
+        mapping_refs: []
+
+  - number: 6
+    headline: Remembering
+    candidates:
+      - id: 1
+        text: "The record is the memory; the memory is the proof."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [books-of-sorrow]
+        mapping_refs: [persistence]
+      - id: 2
+        text: "A hive that forgets its ledger feeds its own worm."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [books-of-sorrow, worm-gods]
+        mapping_refs: [persistence]
+      - id: 3
+        text: "Healthy now is not the same as back after the dark."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [books-of-sorrow]
+        mapping_refs: [persistence]
+
+  - number: 7
+    headline: Council
+    candidates:
+      - id: 1
+        text: "Many voices, one verdict."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [osmium-court]
+        mapping_refs: [agent-roster]
+      - id: 2
+        text: "Judgment is delegated; enforcement is not."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [osmium-court]
+        mapping_refs: [deterministic-pipeline, classification]
+      - id: 3
+        text: "The court convenes; the scripts have already decided."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [osmium-court]
+        mapping_refs: [agent-roster, deterministic-pipeline]
+
+  - number: 8
+    headline: Worm
+    candidates:
+      - id: 1
+        text: "Every strength is a bargain with a hunger."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [worm-gods]
+        mapping_refs: []
+      - id: 2
+        text: "Feed the work, or the work feeds on you."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [worm-gods]
+        mapping_refs: [cadence]
+      - id: 3
+        text: "The hunger is honest; it never pretends to sleep."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [worm-gods]
+        mapping_refs: [cadence]
+
+  - number: 9
+    headline: Defeated
+    candidates:
+      - id: 1
+        text: "In the sword logic, defeat is only data."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [sword-logic]
+        mapping_refs: [classification]
+      - id: 2
+        text: "Fall, classify, rise again on the next cadence."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [sword-logic]
+        mapping_refs: [classification, cadence]
+      - id: 3
+        text: "A loss recorded is a loss survived."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [sword-logic, books-of-sorrow]
+        mapping_refs: [persistence]
+
+  - number: 10
+    headline: The Witness
+    candidates:
+      - id: 1
+        text: "It watches from the dark between the stars."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [the-witness]
+        mapping_refs: []
+      - id: 2
+        text: "Nothing ships unwitnessed."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [the-witness]
+        mapping_refs: [deterministic-pipeline, enforcement-gate]
+      - id: 3
+        text: "The dashboard sees; the gate decides."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [the-witness]
+        mapping_refs: [gateway, enforcement-gate]
+
+  - number: 11
+    headline: With Mara
+    candidates:
+      - id: 1
+        text: "Even queens keep allies beyond the reef."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [mara-sov]
+        mapping_refs: [hub]
+      - id: 2
+        text: "An alliance of necessity is still an alliance."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [mara-sov]
+        mapping_refs: [hub]
+      - id: 3
+        text: "Trust is a treaty, renewed each cycle."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [mara-sov]
+        mapping_refs: [hub, cadence]
+
+  - number: 12
+    headline: Raid
+    candidates:
+      - id: 1
+        text: "Six voices enter; the discipline holds them."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [vow-of-the-disciple]
+        mapping_refs: [agent-roster]
+      - id: 2
+        text: "Bring a fireteam; the deep does not negotiate."
+        nature: canon_inspired
+        copy_source: generated_lore
+        lore_refs: [vow-of-the-disciple]
+        mapping_refs: [agent-roster, orchestrator]
+      - id: 3
+        text: "The hardest work in the queue gets the whole hive."
+        nature: extrapolation
+        copy_source: generated_lore
+        lore_refs: [vow-of-the-disciple]
+        mapping_refs: [orchestrator, classification]
