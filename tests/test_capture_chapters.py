@@ -157,6 +157,30 @@ def test_cli_from_json_replay_writes_the_reshaped_artifact(tmp_path):
     assert written["captured_with"] == capture_chapters.CAPTURED_WITH
 
 
+def test_cli_live_capture_records_the_same_captured_with_pipeline(monkeypatch,
+                                                                   tmp_path):
+    """The live capture path must record the same replayable pipeline as
+    the offline `--from-json` path, not a one-off command string."""
+    raw = _raw_info([
+        {"start_time": 0.0, "end_time": 125.0, "title": "The Enclave"},
+    ])
+
+    def fake_fetch_raw(url):
+        assert url == "https://www.youtube.com/watch?v=abc123XYZ_"
+        return raw
+
+    monkeypatch.setattr(capture_chapters, "fetch_raw", fake_fetch_raw)
+    out_path = tmp_path / "live.json"
+    result = capture_chapters.main([
+        "https://www.youtube.com/watch?v=abc123XYZ_",
+        "--captured", "2026-08-29",
+        "--out", str(out_path),
+    ])
+    assert result == 0
+    written = json.loads(out_path.read_text(encoding="utf-8"))
+    assert written["captured_with"] == capture_chapters.CAPTURED_WITH
+
+
 def test_cli_live_capture_requires_a_url():
     result = subprocess.run(
         [sys.executable, str(CAPTURE), "--captured", "2026-08-29"],

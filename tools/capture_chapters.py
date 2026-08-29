@@ -123,9 +123,7 @@ def main(argv: list[str] | None = None) -> int:
         if not args.url:
             parser.error("the following arguments are required: url")
         info = fetch_raw(args.url)
-        captured_with = (
-            f"{' '.join(RAW_CAPTURE_COMMAND)} <url> | "
-            "python3 tools/capture_chapters.py")
+        captured_with = CAPTURED_WITH
 
     captured = args.captured or dt.date.today().isoformat()
     payload = capture_payload(info, captured=captured,

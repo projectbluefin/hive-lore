@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from tools import capture_chapters
 
 ROOT = Path(__file__).resolve().parent.parent
 VOCAB = ROOT / "vocab" / "season-one.yaml"
@@ -127,6 +128,9 @@ def test_chapter_list_carries_recorded_publisher_provenance():
     artifact = load_headline_artifact()
     # The recorded source must point at the artifact and agree with it.
     assert source["artifact"] == "sources/jlzQnXcUxqI.chapters.json"
+    assert source["captured_with"] == artifact["captured_with"] == (
+        capture_chapters.CAPTURED_WITH
+    )
     assert artifact["video_id"] == "jlzQnXcUxqI"
     assert artifact["url"] == source["video"]
     assert artifact["chapters"], "captured artifact has no chapters"
@@ -326,4 +330,3 @@ def test_project_lore_never_partially_emits_under_a_narrow_encoding():
     )
     assert result.returncode == 0, result.stderr.decode("ascii", "replace")
     json.loads(result.stdout.decode("ascii"))  # must parse as complete JSON
-
