@@ -138,3 +138,16 @@ usage, not in-game canon.
 
 Source: community usage; e.g. Destiny 2 subreddit glossary discussions of
 "blueberry" — <https://www.reddit.com/r/DestinyTheGame/> (term of art)
+
+---
+
+## Project lore (not canon)
+
+This document is a **canon** reference. Owner-authored project lore is a
+different class of copy and lives as data in `vocab/season-one.yaml` under
+`project_lore`, with its source timecode and verbatim wording (see AGENTS.md,
+"Owner-authored project lore"). It may not be cited from this file as canon
+and may not inform `canon*` candidates.
+
+Current record: `savathuns-ship` — Witch Queen archive, 01:53, bottom-right
+lower third.

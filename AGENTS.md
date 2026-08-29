@@ -76,6 +76,24 @@ repository's own README.
   repository, not imagined. If the architecture has no component that fits,
   the metaphor does not get invented to fill the hole.
 
+## Owner-authored project lore is a fourth class of copy
+
+Beside `canon`, `canon_inspired`, and `extrapolation` there is
+**`owner_authored`**: lore the owner wrote for this project. It is recorded in
+`vocab/season-one.yaml` under `project_lore` with its source timecode and
+exact wording.
+
+| | |
+|---|---|
+| It is **project lore, never Destiny canon.** It may not be cited as canon and may not inform `canon*` candidates. |
+| The wording is **verbatim**. Reproduce it exactly or omit it; never paraphrase, "fix", or extend it. |
+| It is **kept off the heroes.** It never renders on a nameplate, dossier, or any person-facing surface. Placement belongs to the film renderer; this repository supplies provenance and data only. |
+
+Current record: `savathuns-ship` — source 01:53 in the Witch Queen archive, a
+bottom-right lower third naming Savathûn's ship from this project's point of
+view, in exactly two lines: `Palace of AI Expectations` /
+`Tomb of Platform Teams`.
+
 ## Subtitles are never about people
 
 A subtitle describes the **episode's fiction or its architecture metaphor**.

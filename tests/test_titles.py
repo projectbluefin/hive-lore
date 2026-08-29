@@ -183,3 +183,28 @@ def test_scope_is_title_slide_only():
     assert policy["generated_scope"] == "title_slide_subtitle_only"
     assert policy["headlines"] == "publisher_verbatim"
     assert policy["frozen_downstream"] is True
+
+
+def test_owner_authored_ship_lore_is_verbatim():
+    """Owner, 2026-08-29: Witch Queen archive 01:53 lower third, exactly two
+    lines. Verbatim or omitted — never paraphrased, never canon."""
+    entries = {e["id"]: e for e in load_vocab()["project_lore"]}
+    ship = entries["savathuns-ship"]
+    assert ship["lines"] == ["Palace of AI Expectations", "Tomb of Platform Teams"]
+    assert ship["source"] == "Witch Queen archive, 01:53, bottom-right lower third"
+    assert ship["nature"] == "owner_authored"
+    assert ship["copy_source"] == "owner_authored_lore"
+    assert ship["person_facing"] == "never"
+
+
+def test_project_lore_is_never_canon_and_never_person_facing():
+    vocab = load_vocab()
+    for entry in vocab["project_lore"]:
+        assert entry["nature"] == "owner_authored", entry["id"]
+        assert entry["person_facing"] == "never", entry["id"]
+        # Kept off the heroes and out of the canon reference: project-lore
+        # text must not appear in any subtitle candidate or the lore doc.
+        for line in entry["lines"]:
+            for chapter, candidate in all_candidates(vocab):
+                assert line.lower() not in candidate["text"].lower()
+            assert line.lower() not in LORE.read_text(encoding="utf-8").lower()
