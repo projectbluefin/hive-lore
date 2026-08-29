@@ -43,6 +43,11 @@ PUBLISHER_CHAPTERS = [
 
 NATURES = {"canon", "canon_inspired", "extrapolation"}
 
+# Subtitle candidates are project-authored copy, never quoted scripture:
+# `canon` claims live in lore/, so a candidate may only be `canon_inspired`
+# (assembled from cited canon terms) or `extrapolation` (project metaphor).
+CANDIDATE_NATURES = {"canon_inspired", "extrapolation"}
+
 # Known person-shaped strings that must never appear in a subtitle. The
 # yaml's banned_terms list is the policy floor; these are regression pins
 # for the specific failure the contract exists to prevent — a subtitle that
@@ -90,11 +95,30 @@ def all_candidates(vocab: dict):
             yield chapter, candidate
 
 
+HEADLINE_SOURCE_VIDEO = "https://www.youtube.com/watch?v=jlzQnXcUxqI"
+
+
 def test_exactly_twelve_chapters_in_publisher_order():
     vocab = load_vocab()
     headlines = [c["headline"] for c in vocab["chapters"]]
     assert headlines == PUBLISHER_CHAPTERS
     assert [c["number"] for c in vocab["chapters"]] == list(range(1, 13))
+
+
+def test_chapter_list_carries_recorded_publisher_provenance():
+    """The headlines claim publisher-verbatim status; that claim must name
+    its source and the chapters must match the recorded publisher titles."""
+    vocab = load_vocab()
+    source = vocab.get("headline_source")
+    assert source, "headline_source must record where the chapter list came from"
+    assert source["kind"] == "publisher_chapter_metadata"
+    assert source["video"] == HEADLINE_SOURCE_VIDEO
+    assert source["video"].startswith("https://www.youtube.com/watch?v=")
+    assert source["recorded"]
+    # The chapter list must agree with the provenance record, not merely
+    # with a second list written in the same commit.
+    assert source["publisher_titles"] == PUBLISHER_CHAPTERS
+    assert [c["headline"] for c in vocab["chapters"]] == source["publisher_titles"]
 
 
 def test_each_chapter_has_exactly_three_candidates():
@@ -140,6 +164,27 @@ def test_every_candidate_carries_full_provenance():
         assert isinstance(candidate["mapping_refs"], list), where
         assert candidate["lore_refs"] or candidate["mapping_refs"], where
     assert vocab["authorised_by"].strip()
+
+
+def test_no_candidate_claims_canon_nature():
+    """Candidates are stylized project copy. A `canon` nature would assert the
+    words are quoted scripture; canon claims belong to lore/ entries only."""
+    for chapter, candidate in all_candidates(load_vocab()):
+        assert candidate["nature"] in CANDIDATE_NATURES, (
+            f"chapter {chapter['number']} candidate {candidate['id']}: "
+            f"{candidate['nature']!r} is not a candidate nature"
+        )
+
+
+def test_canon_inspired_candidates_cite_lore():
+    """`canon_inspired` is a claim to be built from cited canon terms — it is
+    meaningless without at least one lore_ref."""
+    for chapter, candidate in all_candidates(load_vocab()):
+        if candidate["nature"] == "canon_inspired":
+            assert candidate["lore_refs"], (
+                f"chapter {chapter['number']} candidate {candidate['id']} "
+                "is canon_inspired but cites no lore"
+            )
 
 
 def test_every_ref_resolves_to_a_cited_entry():
@@ -208,3 +253,22 @@ def test_project_lore_is_never_canon_and_never_person_facing():
             for chapter, candidate in all_candidates(vocab):
                 assert line.lower() not in candidate["text"].lower()
             assert line.lower() not in LORE.read_text(encoding="utf-8").lower()
+
+
+def test_project_lore_cli_emits_the_ship_record_verbatim():
+    """destiny-vids reads project lore through the CLI, never by parsing the
+    YAML itself. The record must arrive exact: lines, source time, placement."""
+    first = run_cli("--project-lore")
+    assert first == run_cli("--project-lore")  # deterministic
+    payload = json.loads(first)
+    entries = {e["id"]: e for e in payload["project_lore"]}
+    ship = entries["savathuns-ship"]
+    assert ship["lines"] == ["Palace of AI Expectations", "Tomb of Platform Teams"]
+    assert ship["source"] == "Witch Queen archive, 01:53, bottom-right lower third"
+    assert "01:53" in ship["source"]
+    assert ship["nature"] == "owner_authored"
+    assert ship["copy_source"] == "owner_authored_lore"
+    assert ship["person_facing"] == "never"
+    assert "film renderer" in ship["placement"]
+    # The CLI record must be the committed record, not a paraphrase.
+    assert payload["project_lore"] == load_vocab()["project_lore"]

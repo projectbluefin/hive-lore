@@ -38,8 +38,11 @@ headline, unchanged: *The Enclave, On Mars, Savathun, The Relic, To Be
 Chosen, Remembering, Council, Worm, Defeated, The Witness, With Mara, Raid*.
 
 Nothing here rewrites, reorders, shortens, or "improves" those headlines.
-This repository only offers **three subtitle candidates per chapter**, and
-downstream picks one and freezes it.
+Their provenance is recorded in `vocab/season-one.yaml` under
+`headline_source`: the publisher chapter metadata of
+<https://www.youtube.com/watch?v=jlzQnXcUxqI>. This repository only offers
+**three subtitle candidates per chapter**, and downstream picks one and
+freezes it.
 
 ## Generation is a proposal, and it is deterministic
 
@@ -66,9 +69,11 @@ Subtitles draw on **canon Destiny material**, recorded in
 repository's own README.
 
 - Canon and extrapolation are labelled differently. Every candidate carries a
-  `nature` field: `canon` (a claim the source makes), `canon_inspired`
-  (grammar or imagery assembled from canon), or `extrapolation` (the project
-  metaphor). A pattern inferred from examples is marked as inferred.
+  `nature` field: `canon_inspired` (grammar or imagery assembled from cited
+  canon terms) or `extrapolation` (the project metaphor). A pattern inferred
+  from examples is marked as inferred. **A candidate never carries `canon`** —
+  candidates are stylized project copy, and a `canon` label would assert the
+  words are quoted scripture. Canon claims live in `lore/` entries only.
 - A subtitle is assembled from documented lore terms, **not** lifted from a
   named character's epithet. Nobody's episode is titled by stealing Oryx's
   or Savathûn's personal titles.
@@ -129,7 +134,7 @@ Every candidate in `vocab/season-one.yaml` records where it came from:
 | `copy_source: generated_lore` | Produced under this repository's contract. |
 | `lore_refs` | The `lore/` entry IDs the canon parts came from. May be empty. |
 | `mapping_refs` | The `mapping/` entry IDs the architecture metaphor came from. May be empty. |
-| `nature` | `canon`, `canon_inspired`, or `extrapolation`. |
+| `nature` | `canon_inspired` or `extrapolation` for candidates (`canon` is reserved for `lore/` claims); `owner_authored` for `project_lore`. |
 | `authorised_by` | The owner instruction permitting generation at all. |
 
 A generated subtitle with no provenance is indistinguishable from an invented

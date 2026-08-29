@@ -16,6 +16,27 @@ policy:
   candidates_per_chapter: 3
   frozen_downstream: true
 
+# Provenance for the chapter list itself. The 12 headlines are the publisher's
+# chapter titles, recorded verbatim from the video's chapter metadata; the
+# `chapters` list below must match `publisher_titles` in order.
+headline_source:
+  kind: publisher_chapter_metadata
+  video: "https://www.youtube.com/watch?v=jlzQnXcUxqI"
+  recorded: 2026-08-29
+  publisher_titles:
+    - The Enclave
+    - On Mars
+    - Savathun
+    - The Relic
+    - To Be Chosen
+    - Remembering
+    - Council
+    - Worm
+    - Defeated
+    - The Witness
+    - With Mara
+    - Raid
+
 # Owner-authored project lore (AGENTS.md, "Owner-authored project lore").
 # Project lore, NOT Destiny canon: it may not be cited as canon and may not
 # inform canon* candidates. Wording is verbatim — reproduce exactly or omit.
@@ -81,7 +102,7 @@ chapters:
     candidates:
       - id: 1
         text: "A world returned, and nothing on it unchanged."
-        nature: canon
+        nature: canon_inspired
         copy_source: generated_lore
         lore_refs: [mars-returned]
         mapping_refs: []
@@ -213,7 +234,7 @@ chapters:
     candidates:
       - id: 1
         text: "Every strength is a bargain with a hunger."
-        nature: canon
+        nature: canon_inspired
         copy_source: generated_lore
         lore_refs: [worm-gods]
         mapping_refs: []
@@ -257,7 +278,7 @@ chapters:
     candidates:
       - id: 1
         text: "It watches from the dark between the stars."
-        nature: canon
+        nature: canon_inspired
         copy_source: generated_lore
         lore_refs: [the-witness]
         mapping_refs: []

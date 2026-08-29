@@ -5,6 +5,7 @@ Usage:
     python3 tools/titles.py <chapter>     # one chapter's candidates as JSON
     python3 tools/titles.py --all         # all 12 chapters as JSON
     python3 tools/titles.py --list        # chapter numbers and headlines
+    python3 tools/titles.py --project-lore  # owner-authored project lore records
 
 Selection is a pure function of chapter number: no clock, no randomness, no
 network. The same input prints the same bytes forever. `destiny-vids` picks
@@ -54,11 +55,21 @@ def main(argv: list[str] | None = None) -> int:
     group.add_argument("chapter", nargs="?", type=int, help="chapter number (1-12)")
     group.add_argument("--all", action="store_true", help="all chapters")
     group.add_argument("--list", action="store_true", help="chapter numbers and headlines only")
+    group.add_argument(
+        "--project-lore",
+        action="store_true",
+        help="owner-authored project lore records (verbatim, with source and placement)",
+    )
     args = parser.parse_args(argv)
 
     season = load_season()
 
-    if args.list:
+    if args.project_lore:
+        payload = {
+            "season": season["season"],
+            "project_lore": season["project_lore"],
+        }
+    elif args.list:
         payload = {
             "season": season["season"],
             "chapters": [
