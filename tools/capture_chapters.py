@@ -24,7 +24,7 @@ Usage:
     # Reproducible offline replay, from a yt-dlp dump already saved to disk.
     # This is how the artifact can be rebuilt -- and how it is tested --
     # with no network at all:
-    python3 tools/capture_chapters.py <youtube-url> --from-json raw.json
+    python3 tools/capture_chapters.py --from-json raw.json
 
 Stdlib only. yt-dlp is an external subprocess, never imported.
 """
@@ -98,7 +98,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Capture (or replay) a video's chapter metadata into "
                     "this project's committed sources/ shape.")
-    parser.add_argument("url", help="the source video's YouTube URL")
+    parser.add_argument(
+        "url", nargs="?",
+        help="the source video's YouTube URL (required unless "
+             "--from-json is used)")
     parser.add_argument(
         "--from-json", type=Path, metavar="PATH",
         help="reshape a yt-dlp dump already saved to disk ('-' for stdin) "
@@ -117,6 +120,8 @@ def main(argv: list[str] | None = None) -> int:
         info = json.loads(raw)
         captured_with = CAPTURED_WITH
     else:
+        if not args.url:
+            parser.error("the following arguments are required: url")
         info = fetch_raw(args.url)
         captured_with = (
             f"{' '.join(RAW_CAPTURE_COMMAND)} <url> | "

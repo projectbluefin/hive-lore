@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 
 from tools import capture_chapters
@@ -122,28 +123,48 @@ def test_committed_artifact_never_claims_the_raw_command_alone():
 
 
 def test_cli_from_json_replay_writes_the_reshaped_artifact(tmp_path):
-    """The CLI's offline `--from-json` path -- no network, no yt-dlp
-    subprocess -- reshapes a saved raw dump into a written artifact file."""
+    """The committed replay command shape is executable as-recorded: the
+    artifact's literal `captured_with` pipeline ends in an offline
+    `python3 tools/capture_chapters.py --from-json -` stage, and that stage
+    reshapes stdin into the committed artifact shape."""
+    committed = json.loads(ARTIFACT.read_text(encoding="utf-8"))
+    assert committed["captured_with"] == capture_chapters.CAPTURED_WITH
+
+    replay_command = committed["captured_with"].split("|", 1)[1].strip()
+    assert replay_command == "python3 tools/capture_chapters.py --from-json -"
+
     raw = _raw_info([
         {"start_time": 0.0, "end_time": 125.0, "title": "The Enclave"},
     ])
-    raw_path = tmp_path / "raw.json"
-    raw_path.write_text(json.dumps(raw), encoding="utf-8")
-    out_path = tmp_path / "out.json"
+    replay_root = tmp_path / "replay"
+    (replay_root / "tools").mkdir(parents=True)
+    shutil.copy2(CAPTURE, replay_root / "tools" / "capture_chapters.py")
     result = subprocess.run(
-        [sys.executable, str(CAPTURE),
-         "https://www.youtube.com/watch?v=abc123XYZ_",
-         "--from-json", str(raw_path), "--captured", "2026-08-29",
-         "-o", str(out_path)],
-        capture_output=True, text=True, check=True,
+        replay_command.split(),
+        input=json.dumps(raw),
+        cwd=replay_root,
+        capture_output=True,
+        text=True,
+        check=True,
     )
+    out_path = replay_root / "sources" / "abc123XYZ_.chapters.json"
     assert "wrote" in result.stdout
+    assert "yt-dlp" not in result.stdout + result.stderr, \
+        "the offline replay path must never shell out to yt-dlp"
     written = json.loads(out_path.read_text(encoding="utf-8"))
     assert written["chapters"] == [
         {"start": 0, "end": 125, "title": "The Enclave"}]
-    assert "capture_chapters" in written["captured_with"]
-    assert "yt-dlp" not in result.stdout + result.stderr, \
-        "the offline replay path must never shell out to yt-dlp"
+    assert written["captured_with"] == capture_chapters.CAPTURED_WITH
+
+
+def test_cli_live_capture_requires_a_url():
+    result = subprocess.run(
+        [sys.executable, str(CAPTURE), "--captured", "2026-08-29"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0
+    assert "the following arguments are required: url" in result.stderr
 
 
 def test_fetch_raw_is_the_only_place_that_invokes_yt_dlp(monkeypatch):
