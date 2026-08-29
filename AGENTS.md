@@ -40,7 +40,10 @@ Chosen, Remembering, Council, Worm, Defeated, The Witness, With Mara, Raid*.
 Nothing here rewrites, reorders, shortens, or "improves" those headlines.
 Their provenance is recorded in `vocab/season-one.yaml` under
 `headline_source`: the publisher chapter metadata of
-<https://www.youtube.com/watch?v=jlzQnXcUxqI>. This repository only offers
+<https://www.youtube.com/watch?v=jlzQnXcUxqI>, captured with
+`yt-dlp --dump-single-json --skip-download` into
+`sources/jlzQnXcUxqI.chapters.json` — the artifact is the authority the
+headlines are validated against. This repository only offers
 **three subtitle candidates per chapter**, and downstream picks one and
 freezes it.
 

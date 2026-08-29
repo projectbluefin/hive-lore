@@ -18,24 +18,14 @@ policy:
 
 # Provenance for the chapter list itself. The 12 headlines are the publisher's
 # chapter titles, recorded verbatim from the video's chapter metadata; the
-# `chapters` list below must match `publisher_titles` in order.
+# captured artifact is the authority the `chapters` list below is validated
+# against (tests/test_titles.py reads it — never a hand-typed copy).
 headline_source:
   kind: publisher_chapter_metadata
   video: "https://www.youtube.com/watch?v=jlzQnXcUxqI"
-  recorded: 2026-08-29
-  publisher_titles:
-    - The Enclave
-    - On Mars
-    - Savathun
-    - The Relic
-    - To Be Chosen
-    - Remembering
-    - Council
-    - Worm
-    - Defeated
-    - The Witness
-    - With Mara
-    - Raid
+  artifact: sources/jlzQnXcUxqI.chapters.json
+  captured_with: "yt-dlp --dump-single-json --skip-download"
+  recorded: "2026-08-29"
 
 # Owner-authored project lore (AGENTS.md, "Owner-authored project lore").
 # Project lore, NOT Destiny canon: it may not be cited as canon and may not

@@ -23,23 +23,9 @@ VOCAB = ROOT / "vocab" / "season-one.yaml"
 LORE = ROOT / "lore" / "witch-queen.md"
 MAPPING = ROOT / "mapping" / "kubestellar-hive.md"
 TITLES = ROOT / "tools" / "titles.py"
+HEADLINE_ARTIFACT = ROOT / "sources" / "jlzQnXcUxqI.chapters.json"
 
-# The 12 publisher chapter titles, verbatim and in order. These are the slide
-# headlines and nothing in this repository may rewrite them (AGENTS.md).
-PUBLISHER_CHAPTERS = [
-    "The Enclave",
-    "On Mars",
-    "Savathun",
-    "The Relic",
-    "To Be Chosen",
-    "Remembering",
-    "Council",
-    "Worm",
-    "Defeated",
-    "The Witness",
-    "With Mara",
-    "Raid",
-]
+HEADLINE_SOURCE_VIDEO = "https://www.youtube.com/watch?v=jlzQnXcUxqI"
 
 NATURES = {"canon", "canon_inspired", "extrapolation"}
 
@@ -71,6 +57,13 @@ def load_vocab() -> dict:
         return yaml.safe_load(fh)
 
 
+def load_headline_artifact() -> dict:
+    """The captured publisher chapter metadata — the authority for the 12
+    slide headlines. Never a hand-typed copy."""
+    with open(HEADLINE_ARTIFACT, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 def doc_ids(path: Path) -> set[str]:
     """The stable entry IDs of a reference doc: its `##` heading slugs."""
     return {
@@ -95,30 +88,40 @@ def all_candidates(vocab: dict):
             yield chapter, candidate
 
 
-HEADLINE_SOURCE_VIDEO = "https://www.youtube.com/watch?v=jlzQnXcUxqI"
-
-
 def test_exactly_twelve_chapters_in_publisher_order():
     vocab = load_vocab()
     headlines = [c["headline"] for c in vocab["chapters"]]
-    assert headlines == PUBLISHER_CHAPTERS
+    assert headlines == [c["title"] for c in load_headline_artifact()["chapters"]]
+    assert len(headlines) == 12
     assert [c["number"] for c in vocab["chapters"]] == list(range(1, 13))
 
 
 def test_chapter_list_carries_recorded_publisher_provenance():
     """The headlines claim publisher-verbatim status; that claim must name
-    its source and the chapters must match the recorded publisher titles."""
+    its source, and the chapters must match the captured publisher chapter
+    metadata — not a hand-typed list in the YAML or in this file."""
     vocab = load_vocab()
     source = vocab.get("headline_source")
     assert source, "headline_source must record where the chapter list came from"
     assert source["kind"] == "publisher_chapter_metadata"
     assert source["video"] == HEADLINE_SOURCE_VIDEO
     assert source["video"].startswith("https://www.youtube.com/watch?v=")
-    assert source["recorded"]
-    # The chapter list must agree with the provenance record, not merely
-    # with a second list written in the same commit.
-    assert source["publisher_titles"] == PUBLISHER_CHAPTERS
-    assert [c["headline"] for c in vocab["chapters"]] == source["publisher_titles"]
+    # `recorded` must be quoted in the YAML so PyYAML yields a JSON-safe str.
+    assert isinstance(source["recorded"], str) and source["recorded"]
+
+    artifact = load_headline_artifact()
+    # The recorded source must point at the artifact and agree with it.
+    assert source["artifact"] == "sources/jlzQnXcUxqI.chapters.json"
+    assert artifact["video_id"] == "jlzQnXcUxqI"
+    assert artifact["url"] == source["video"]
+    assert artifact["chapters"], "captured artifact has no chapters"
+    for chapter in artifact["chapters"]:
+        assert chapter["title"].strip()
+        assert chapter["start"] < chapter["end"]
+    # The YAML headlines are validated against the captured artifact titles.
+    assert [c["headline"] for c in vocab["chapters"]] == [
+        c["title"] for c in artifact["chapters"]
+    ]
 
 
 def test_each_chapter_has_exactly_three_candidates():
